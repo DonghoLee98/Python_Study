@@ -83,6 +83,27 @@ weapons = []
 # 무기 이동 속도
 weapon_speed = 10
 
+# 공 만들기 (4 개 크기에 대해 독립적으로 처리)
+ball_images = [
+    pygame.image.load(os.path.join(image_path, "balloon1.png")),
+    pygame.image.load(os.path.join(image_path, "balloon2.png")),
+    pygame.image.load(os.path.join(image_path, "balloon3.png")),
+    pygame.image.load(os.path.join(image_path, "balloon4.png"))]
+
+# 공 크기에 따른 최초 스피드
+ball_speed_y = [-18, -15, -12, -9]  # index 0, 1, 2, 3 의 값
+
+# 공 info   (dictionary)
+balls = []
+
+balls.append({
+    "pos_x" : 50,   # 공의 x 좌표
+    "pos_y" : 50,   # 공의 y 좌표
+    "img_idx" : 0,  # 공의 이미지 인덱스
+    "to_x" : 3,     # 공의 x축 이동방향 (3 : 우 / -3 : 좌)
+    "to_y" : -6,    # 공의 y축 이동방향
+    "init_spd_y" : ball_speed_y[0]})    # 공 최초 속도
+
 # 이벤트 루프
 running = True  # 게임 실행중인가?
 while running:
@@ -95,10 +116,6 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:       # 확인한 이벤트가 Quit일 때 아래를 실행
             running = False                 # 게임 종료
-
-        ####################################################################
-        ## 3. 게임 캐릭터 위치 정의
-        ####################################################################
 
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
@@ -137,6 +154,31 @@ while running:
     # 오버라이드 이므로, weapons 리스트를 초기화하고 다시 담게 되니 자연스럽게 삭제?되는 효과
     weapons = [ [w[0], w[1]] for w in weapons if w[1] > 0]
 
+    # 공 위치 정의
+    for ball_idx, ball_val in enumerate(balls):
+        ball_pos_x = ball_val["pos_x"]
+        ball_pos_y = ball_val["pos_y"]
+        ball_img_idx = ball_val["img_idx"]
+
+        ball_size = ball_images[ball_img_idx].get_rect().size
+        ball_width = ball_size[0]
+        ball_height = ball_size[1]
+
+        # 벽에 닿았을 때, 튕겨서 방향이 바뀌는 효과
+        if ball_pos_x < 0 or ball_pos_x > screen_width - ball_width:
+            ball_val["to_x"] = ball_val["to_x"] * -1
+
+        # 세로 위치
+        # 공이 바닥 상태일 때 (튕겨 올라가는 순간)
+        if ball_pos_y >= screen_height - stage_height - ball_height:
+            ball_val["to_y"] = ball_val["init_spd_y"]
+        else:   # 그 외 모든 경우, 아래로 가속도 받도록 한다 (시작값이 (-)라, 포물선 운동 한다)
+            ball_val["to_y"] += 0.5
+
+        ball_val["pos_x"] += ball_val["to_x"]
+        ball_val["pos_y"] += ball_val["to_y"]
+
+
     ####################################################################
     ## 4. 충돌 처리
     ####################################################################
@@ -162,6 +204,13 @@ while running:
     screen.blit(background, (0, 0))         # 배경 그리기
     for weapon_x_pos, weapon_y_pos in weapons:
         screen.blit(weapon, (weapon_x_pos, weapon_y_pos))
+
+    for idx, val in enumerate(balls):
+        ball_pos_x = val["pos_x"]
+        ball_pos_y = val["pos_y"]
+        ball_img_idx = val["img_idx"]
+        screen.blit(ball_images[ball_img_idx], (ball_pos_x, ball_pos_y))
+
     screen.blit(stage, (0, screen_height - stage_height))
     screen.blit(character, (character_x_pos, character_y_pos))
 
