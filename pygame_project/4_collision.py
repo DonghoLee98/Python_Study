@@ -104,6 +104,10 @@ balls.append({
     "to_y" : -6,    # 공의 y축 이동방향
     "init_spd_y" : ball_speed_y[0]})    # 공 최초 속도
 
+# 사라질 무기, 공 정보 저장 변수
+weapon_to_remove = -1
+ball_to_remove = -1
+
 # 이벤트 루프
 running = True  # 게임 실행중인가?
 while running:
@@ -183,19 +187,51 @@ while running:
     ## 4. 충돌 처리
     ####################################################################
 
-    # 충돌 처리 (character의 rect 속성값을 x, y position으로 업데이트)
-    # character_rect = character.get_rect()   # <rect(0, 0, 70, 70)> : left, top, width, height
-    # character_rect.left = character_x_pos
-    # character_rect.top = character_y_pos
+    # 캐릭터 rect 정보 업데이트
+    character_rect = character.get_rect()
+    character_rect.left = character_x_pos
+    character_rect.top = character_y_pos
 
-    # enemy_rect = enemy.get_rect()
-    # enemy_rect.left = enemy_x_pos   # enemy_pos 최초 업데이트
-    # enemy_rect.top = enemy_y_pos
+    for ball_idx, ball_val in enumerate(balls):
+        ball_pos_x = ball_val["pos_x"]
+        ball_pos_y = ball_val["pos_y"]
+        ball_img_idx = ball_val["img_idx"]
 
-    # # 충돌 체크
-    # if character_rect.colliderect(enemy_rect):
-    #     print("아야!")
-    #     running = False
+        # 공 rect 정보 업데이트
+        ball_rect = ball_images[ball_img_idx].get_rect()
+        ball_rect.left = ball_pos_x
+        ball_rect.top = ball_pos_y
+
+        # 공과 캐릭터 충돌 체크크
+        if character_rect.colliderect(ball_rect):
+            running = False
+            break
+
+        # 공과 무기들 충돌 처리
+        for weapon_idx, weapon_val in enumerate(weapons):
+            weapon_pos_x = weapon_val[0]
+            weapon_pos_y = weapon_val[1]
+
+            # 무기 rect 정보 업데이트
+            weapon_rect = weapon.get_rect()
+            weapon_rect.left = weapon_pos_x
+            weapon_rect.top = weapon_pos_y
+
+            # 충돌 체크
+            if weapon_rect.colliderect(ball_rect):
+                weapon_to_remove = weapon_idx   # 공에 닿은 무기 없애기 위한 값 설정
+                ball_to_remove = ball_idx       # 무기에 닿은 공 없애기 위한 값 설정
+                break
+
+    # 충돌된 공 or 무기 없애기
+    if ball_to_remove > -1:
+        del balls[ball_to_remove]
+        ball_to_remove = -1
+
+    if weapon_to_remove > -1:
+        del weapons[weapon_to_remove]
+        weapon_to_remove = -1
+
 
     ####################################################################
     ## 5. 화면에 그리기
@@ -214,7 +250,6 @@ while running:
     screen.blit(stage, (0, screen_height - stage_height))
     screen.blit(character, (character_x_pos, character_y_pos))
 
-    
 
     ####################################################################
     ## 6. 화면 업데이트
