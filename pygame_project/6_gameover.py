@@ -19,6 +19,10 @@
 # 5. 공 : 160*160, 80*80, 40*40, 20*20 - balloon1 ~ 4.png
 ####################################################################
 
+# 1. 모든 공 없애면 게임 종료 (win)
+# 2. 공에 닿으면 게임 종료 (lose)
+# 3. 시간 제한 (99초) 초과 시 게임 종료 (lose)
+
 import os
 import pygame
 
@@ -107,6 +111,14 @@ balls.append({
 # 사라질 무기, 공 정보 저장 변수
 weapon_to_remove = -1
 ball_to_remove = -1
+
+# Font 정의
+game_font = pygame.font.Font(None, 40)
+total_time = 100
+start_ticks = pygame.time.get_ticks()   # 게임 시작 시간 정의
+
+# 게임 종료 메시지  (Time Out, Win, Game Over)
+game_result = "Game Over"
 
 # 이벤트 루프
 running = True  # 게임 실행중인가?
@@ -202,7 +214,7 @@ while running:
         ball_rect.left = ball_pos_x
         ball_rect.top = ball_pos_y
 
-        # 공과 캐릭터 충돌 체크크
+        # 공과 캐릭터 충돌 체크
         if character_rect.colliderect(ball_rect):
             running = False
             break
@@ -261,6 +273,10 @@ while running:
         del weapons[weapon_to_remove]
         weapon_to_remove = -1
 
+    # 모든 공 없앤 경우, 게임 종료 (win)
+    if len(balls) == 0:
+        game_result = "You Win!"
+        running = False
 
     ####################################################################
     ## 5. 화면에 그리기
@@ -279,14 +295,30 @@ while running:
     screen.blit(stage, (0, screen_height - stage_height))
     screen.blit(character, (character_x_pos, character_y_pos))
 
+    # 경과 시간 계산
+    elapsed_time = (pygame.time.get_ticks() - start_ticks) / 1000   # ms -> s
+    timer = game_font.render("Time : {}".format(int(total_time - elapsed_time)), True, (255, 255, 255))
+    screen.blit(timer, (10, 10))
+
+    # 시간 초과 시
+    if total_time - elapsed_time <= 0:
+        game_result = "Time Over"
+        running = False
 
     ####################################################################
     ## 6. 화면 업데이트
     ####################################################################
     pygame.display.update()                 # 프레임마다 화면 update
 
-# 종료 전 대기
-# pygame.time.delay(1000) # 2초 정도 대기 후 게임 종료
+# 게임 오버 메시지
+msg = game_font.render(game_result, True, (255, 255, 0))    # 노랑
+msg_rect = msg.get_rect(center=(int(screen_width / 2), int(screen_height / 2)))
+screen.blit(msg, msg_rect)
+
+pygame.display.update()
+
+pygame.time.delay(2000)
+
 
 # pygame 종료
 pygame.quit()
