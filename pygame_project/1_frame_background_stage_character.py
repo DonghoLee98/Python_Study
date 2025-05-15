@@ -50,38 +50,22 @@ clock = pygame.time.Clock()
 current_path = os.path.dirname(__file__)    # 현재 파일의 위치 반환
 image_path = os.path.join(current_path, "images")   # image 폴더 위치 반환
 
+# 배경 만들기
+background = pygame.image.load(os.path.join(image_path, "background.png"))
 
-# 캐릭터(sprite) 불러오기
-character           = pygame.image.load("C:/IT_Study/Python/Python_Game_Making/pygmae_basic/character.png")
-character_size      = character.get_rect().size # 이미지 크기를 구해옴
-character_width     = character_size[0]         # 캐릭터 가로 크기
-character_height    = character_size[1]         # 캐릭터 세로 크기
-character_x_pos     = (screen_width - character_width) / 2  # 화면 가로의 절반 크기 = 정중앙 (가로)
-character_y_pos     = screen_height - character_height      # 화면 세로 크기 = 가장 아래 (세로)
+# 스테이지 만들기
+stage = pygame.image.load(os.path.join(image_path, "stage.png"))
+stage_size = stage.get_rect().size
+stage_height = stage_size[1]    # 스테이지 높이 위에 캐릭터 두기 위함
 
-# 캐릭터 이동할 좌표
-to_x = 0
-to_y = 0
+# 캐릭터 만들기
+character = pygame.image.load(os.path.join(image_path, "character.png"))
+character_size = character.get_rect().size
+character_width = character_size[0]
+character_height = character_size[1]
+character_x_pos = (screen_width - character_width) / 2
+character_y_pos = (screen_height - (stage_height + character_height))
 
-# 캐릭터 이동 속도
-character_speed = 0.6
-
-# 적 캐릭터 불러오기    //// "캐릭터 불러오기" 함수 만들어서 사용해 보기!
-enemy           = pygame.image.load("C:/IT_Study/Python/Python_Game_Making/pygmae_basic/enemy.png")
-enemy_size      = enemy.get_rect().size # 이미지 크기를 구해옴
-enemy_width     = enemy_size[0]         # 캐릭터 가로 크기
-enemy_height    = enemy_size[1]         # 캐릭터 세로 크기
-enemy_x_pos     = (screen_width - enemy_width) / 2      # 화면 가로의 절반 크기 = 정중앙 (가로)
-enemy_y_pos     = (screen_height - enemy_height) / 2    # 화면 세로 크기 = 가장 아래 (세로)
-
-# 폰트 정의
-game_font = pygame.font.Font(None, 40)  # 폰트 객체 생성 (font, size)
-
-# 게임 플레이 시간
-total_time = 10
-
-# 시작 시간
-start_ticks = pygame.time.get_ticks()   # 프로그램 시작 tick 받아오기
 
 # 이벤트 루프
 running = True  # 게임 실행중인가?
@@ -154,22 +138,8 @@ while running:
     ####################################################################
 
     screen.blit(background, (0, 0))         # 배경 그리기
-
-    screen.blit(character, (character_x_pos, character_y_pos))  # 캐릭터 그리기
-    screen.blit(enemy, (enemy_x_pos, enemy_y_pos))              # 적 그리기
-
-    # 타이머 text 표시
-    # 경과 시간 계산
-    elapsed_time = (pygame.time.get_ticks() - start_ticks) / 1000   # (ms) -> (s)
-
-    timer = game_font.render(str(int(total_time - elapsed_time)), True, (255, 255, 255))
-    # (text, antialias, color[tuple], background color(생략시 투명))
-    screen.blit(timer, (10, 10))
-
-    # total - elapsed time < 0 일 때 게임 종료
-    if total_time - elapsed_time <= 0:
-        print("종료!")
-        running = False
+    screen.blit(stage, (0, screen_height - stage_height))
+    screen.blit(character, (character_x_pos, character_y_pos))
 
     ####################################################################
     ## 6. 화면 업데이트
@@ -177,7 +147,7 @@ while running:
     pygame.display.update()                 # 프레임마다 화면 update
 
 # 종료 전 대기
-pygame.time.delay(1000) # 2초 정도 대기 후 게임 종료
+# pygame.time.delay(1000) # 2초 정도 대기 후 게임 종료
 
 # pygame 종료
 pygame.quit()
