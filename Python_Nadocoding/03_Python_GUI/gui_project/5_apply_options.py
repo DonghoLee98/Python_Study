@@ -113,7 +113,7 @@ def merge_image():
 
     # 포맷 옵션 처리
     file_name = "dh_photo." + img_format
-    dest_path = os.path.join(txt_dest_path.get(), "file_name")
+    dest_path = os.path.join(txt_dest_path.get(), file_name)
     result_image.save(dest_path)
     msgbox.showinfo("알림", "작업이 완료되었습니다!")
 
