@@ -22,8 +22,6 @@ soup = BeautifulSoup(res.text, "lxml")
 # print(soup.find("div", attrs={"class":"Footer__footer--gvFec"}))
 # print(soup.find(attrs={"class":"Footer__footer--gvFec"}))
 
-rank1 = soup.find("li", attrs={"class":"rank01"})
+# rank1 = soup.find("li", attrs={"class":"rank01"})
+rank1 = soup.find("li")
 print(rank1)
-
-# https://www.youtube.com/watch?v=yQ20jZwDjTE&list=PLMsa_0kAjjrd8hYYCwbAuDsXZmHpqHvlV&index=6
-# 1 18 30
