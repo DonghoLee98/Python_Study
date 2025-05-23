@@ -24,4 +24,10 @@ soup = BeautifulSoup(res.text, "lxml")
 
 # rank1 = soup.find("li", attrs={"class":"rank01"})
 rank1 = soup.find("li")
-print(rank1)
+print(rank1.a.get_text())
+print(rank1.next_sibling)
+print(rank1.next_sibling.next_sibling)
+
+# https://www.youtube.com/watch?v=yQ20jZwDjTE&list=PLMsa_0kAjjrd8hYYCwbAuDsXZmHpqHvlV&index=4&t=4770s
+# 1:20:39
+
