@@ -11,12 +11,14 @@ ws.sheet_properties.tabColor = "ff66ff" # RGB 형태로 값 넣는다. 탭의 �
 ws1 = wb.create_sheet("YourSheet")      # 주어진 이름으로 새로운 sheet 생성
 ws2 = wb.create_sheet("NewSheet", 2)    # 2 번째 Index 자리에 해당 sheet 생성
 
-# sheet에 접근할 때, wb["sheet이름"] 이렇게도 가능하다
+# Sheet에 접근할 때, wb["sheet이름"] 이렇게도 가능하다
 new_ws = wb["NewSheet"] # Dictionary 형태로 sheet에 접근
 
 print(wb.sheetnames)    # Workbook 아래 모든 sheet들의 이름을 출력
 
-# https://www.youtube.com/watch?v=exgO1LFl9x8&list=PLMsa_0kAjjrd8hYYCwbAuDsXZmHpqHvlV&index=5
-# 22:05
+# Sheet 복사
+new_ws["A1"] = "Test"   # A1 셀에 "Test" 라는 값을 넣어라!
+target = wb.copy_worksheet(new_ws)
+target.title = "Copied Sheet"
 
 wb.save("sample.xlsx")  # 기존 동일한 파일 명이 존재한다면, 그대로 덮어쓰기 됨.
