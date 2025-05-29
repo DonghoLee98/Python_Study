@@ -59,10 +59,12 @@ from openpyxl.utils.cell import coordinate_from_string
 #     print(col[2].value)
 
 # 2 ~ 11번째 row와 2 ~ 3번째 column의 데이터를 끊어서 가져온다
-for row in ws.iter_rows(min_row=2, max_row=11, min_col=2, max_col=3):
-    print(row[0].value, row[1].value)   # [0]수학, [1]영어
+# for row in ws.iter_rows(min_row=2, max_row=11, min_col=2, max_col=3):     # iter_rows : 좌에서 우로 데이터 가져옴
+    # print(row[0].value, row[1].value)   # [0]수학, [1]영어
+    # print(row)
+
+# 범위 지정할 때 min, max 값 따로 명시하지 않으면 최소, 최댓값을 알아서 가져온다
+for col in ws.iter_cols(min_row=2):        # iter_cols : 위에서 아래로 데이터 가져옴
+    print(col.val)
 
 wb.save("sample.xlsx")
-
-# https://www.youtube.com/watch?v=exgO1LFl9x8&list=PLMsa_0kAjjrd8hYYCwbAuDsXZmHpqHvlV&index=6
-# 1:00:00
