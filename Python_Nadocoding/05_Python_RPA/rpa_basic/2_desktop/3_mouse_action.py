@@ -1,5 +1,7 @@
 import pyautogui
 
+# https://www.youtube.com/watch?v=exgO1LFl9x8&t=9466s
+
 # pyautogui.sleep(3)  # 3초 대기
 # print(pyautogui.position())
 
@@ -23,7 +25,9 @@ pyautogui.sleep(3)
 # pyautogui.middleClick()   # 휠클릭
 
 # print(pyautogui.position())
-pyautogui.moveTo(1279, 230)
+# pyautogui.moveTo(1279, 230)
 # MacOS 에서는 drag 등을 사용할 때 button= 값을 무조건 명시해 주어야 한다
-pyautogui.drag(100, 0, duration=0.25, button="left")    # 너무 빠른 동작으로 drag 수행이 되지 않는다면, duration= 을 추가해 준다
+# pyautogui.drag(100, 0, duration=0.25, button="left")    # 너무 빠른 동작으로 drag 수행이 되지 않는다면, duration= 을 추가해 준다
+
+pyautogui.scroll(300)   # (+) 위 방향 / (-) 아래 방향으로 300만큼 scroll
 
