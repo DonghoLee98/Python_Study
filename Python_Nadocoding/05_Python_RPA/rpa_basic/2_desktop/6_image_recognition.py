@@ -36,6 +36,7 @@ import pyautogui
 
 
 # 자동화 대상이 바로 보여지지 않는 경우 (= 웹페이지 창 로딩시간, 파일 여는 시간 등등)
+# 1. 계속 기다리기
 # file_menu_notepad = None
 
 # try:
@@ -46,25 +47,50 @@ import pyautogui
 # if file_menu_notepad:
 #     pyautogui.click(file_menu_notepad)
 
-# 위 내용을 반복문으로 계속해서 찾고 싶을 때
+
+# # 위 내용을 반복문으로 계속해서 찾고 싶을 때  (직접 짠 코드드)
+# import time
+
+# i = 0
+# while True:
+#     try:
+#         file_menu_notepad = pyautogui.locateOnScreen("file_menu_notepad.png")
+#         if file_menu_notepad:
+#             pyautogui.click(file_menu_notepad)
+#             break
+#     except pyautogui.ImageNotFoundException:
+#         if i >= 3:  # 3 초가 경과하기 전까지 image를 찾는다
+#             print("결국 찾지 못하였습니다...")
+#             break
+#         print(str(i) + "초 경과")
+#         pass
+
+#     i += 1
+#     time.sleep(1)
+
+# 2. 일정 시간동안 기다리기 (Time Out)  # 아래 코드는 main display에서만 일단 작동한다. 나중에 영역 따로 지정하기
 import time
+import sys
 
-i = 0
-while True:
-    try:
-        file_menu_notepad = pyautogui.locateOnScreen("file_menu_notepad.png")
-        if file_menu_notepad:
-            pyautogui.click(file_menu_notepad)
+def find_target(img_file, timeout=30):
+    start = time.time()     # 최초 시작 시간 지정
+    target = None
+    while True:
+        try:
+            target = pyautogui.locateOnScreen(img_file)
             break
-    except pyautogui.ImageNotFoundException:
-        if i >= 3:
-            print("결국 찾지 못하였습니다...")
-            break
-        print(str(i) + "초 경과")
-        pass
+        except pyautogui.ImageNotFoundException:
+            end = time.time()
+            if end - start > timeout:
+                break
+    return target
 
-    i += 1
-    time.sleep(1)
+def my_click(img_file, timeout=30):
+    target = find_target(img_file, timeout)
+    if target:
+        pyautogui.click(target)
+    else:
+        print(f"[Timeout {timeout}s] Target Not Found ({img_file}). Terminate Program.")
+        sys.exit()
 
-    # https://www.youtube.com/watch?v=exgO1LFl9x8&t=9466s
-    # 3:13:38
+my_click("file_menu_notepad.png", 10)   # (img_file, timeout)
